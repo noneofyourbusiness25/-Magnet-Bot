@@ -1,101 +1,70 @@
-# TamilMV-Magnet-Bot-Deployment-Guide
-TamilMV Magnet Bot Deployment Guide Telegram bot
+# Evergreen Bot (Controller Edition) 🌲
 
-# 🎬 TamilMV Torrent Bot [![License: MIT][License-Badge]](LICENSE)
+Evergreen is a dual-client system:
+1.  **Controller Bot**: A Telegram Bot (`@YourBot`) that you talk to.
+2.  **User Client**: A fully functional Userbot running on your account, managed by the Controller Bot.
 
-A powerful Telegram bot that automatically scrapes the latest movie torrents from [1TamilMV](https://www.1tamilmv.fi) and posts them directly to your Telegram channel — with thumbnail previews and downloadable `.torrent` files.
+## Features
 
----
+*   **Interactive Login**: Log in to your User Account directly via the Bot Chat.
+*   **Auto-Forwarding**: The User Client listens to source channels and forwards to destination channels.
+*   **Remote Management**: Add/Remove rules via the Controller Bot.
+*   **Persistence**: Sessions and Rules are stored in a database.
 
-## ✨ Features
+## Setup
 
-- 🔄 **Auto Movie Scraper**  
-  Automatically scrapes the latest movies from 1TamilMV website.
+### 1. Requirements
 
-- 📤 **Instant Torrent Upload**  
-  Sends `.torrent` files directly to your configured Telegram channel.
+*   Python 3.7+
+*   `API_ID` and `API_HASH` from [my.telegram.org](https://my.telegram.org).
+*   `BOT_TOKEN` from [@BotFather](https://t.me/BotFather).
 
-- 🖼️ **Thumbnail Support**  
-  Each post comes with a stunning thumbnail to grab attention.
+### 2. Installation
 
-- ⚡ **No Command Needed**  
-  Completely automated — no user interaction required!
+1.  Clone this repository.
+2.  Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-- 💬 **Custom /start Welcome Message**  
-  Beautifully formatted welcome message random image with channel links and support.
+### 3. Configuration
 
-- ❓ **Interactive Help Menu**  
-  Inline buttons allow users to view help info or return to main menu.
+Set the following environment variables (or create a `.env` file if you modify `config.py`):
 
-- 🛡️ **Rate Limit Handling**  
-  Smart retries and wait handling for Telegram API rate limits.
+*   `API_ID`: Your API ID.
+*   `API_HASH`: Your API Hash.
+*   `BOT_TOKEN`: Your Bot Token.
 
+### 4. Running
 
-## ⚙️ Tech Stack
-
-- Python 3
-- Flask (for webhook handling)
-- Telebot (PyTelegramBotAPI)
-- BeautifulSoup (for web scraping)
-- Hosted on **Render.com**
-
-
-## 🚀 Deployment
-[Deployment Guide Link 🖇️](https://sudor2spr.github.io/TamilMV-Magnet-Bot-Deployment-Guide/)
-
-1. Copy docker image ulr
- ```
-docker.io/woodcraftbot/1tamilmv-bot:latest
-```
-5. Set the following variables:
-   • Add Your Telegram bot details.
-```
-TOKEN=87961oo739:AAHBBhz5otZ2kPUAV7UKMuuk
-CHANNEL_ID=-10088800033
-CHANNEL_USERNAME=Tamilmv_Magnet_Link
-WEBHOOK_URL=https://onetamilmv-bot-latest.onrender.com
-TAMILMV_URL=https://www.1tamilmv.fi
+```bash
+python main.py
 ```
 
-4. Deploy to Render / Railway / Your own server
-5. ✅ Done!
+## Usage
 
+Start a chat with your Controller Bot (`@YourBot`).
 
-## 📸 Screenshots
+### Login
+1.  Send `/login`.
+2.  Bot asks for Phone Number (e.g., `+1234567890`).
+3.  Bot asks for OTP (sent to your Telegram App).
+4.  Bot asks for Password (if 2FA is on).
+5.  **Success**: The User Client starts automatically.
 
-| Start Command | Auto Torrent Post |
-|---------------|-------------------|
-| ![start](https://raw.githubusercontent.com/SudoR2spr/TamilMV-Magnet-Bot-Deployment-Guide/refs/heads/master/Op-Screenshot/start-message.jpg) | ![torrent](https://raw.githubusercontent.com/SudoR2spr/TamilMV-Magnet-Bot-Deployment-Guide/refs/heads/master/Op-Screenshot/op-screenshot.jpg) |
+### Commands
+*   `/status`: Check if User Client is running.
+*   `/add <src_id> <dest_id>`: Add a forwarding rule.
+    *   Example: `/add -10012345678 -10087654321`
+*   `/del <src_id> <dest_id>`: Remove a rule.
+*   `/list`: List all rules.
+*   `/logout`: Log out and stop the User Client.
+*   `/help`: Show available commands.
 
+## Architecture
 
-## 📢 Channels
-
-- Updates: [@Tamilmv_Magnet_Link](https://t.me/Tamilmv_Magnet_Link)  
-- Support: [@Opleech_WD](https://t.me/Opleech_WD)
-
-## ❤️ Credits
-
-## Connect with me <img src="https://media.giphy.com/media/iY8CRBdQXODJSCERIr/giphy.gif" width="30px">
-<p align="center">
-<a href="https://t.me/Opleech_WD"><img src="https://img.shields.io/badge/-𝐖𝐎𝐎𝐃𝐜𝐫𝐚𝐟𝐭 𝐌𝐢𝐫𝐫𝐨𝐫 𝐙𝐨𝐧𝐞™%20%20-0077B5?style=flat&logo=Telegram&logoColor=white"/></a>
-<a href="https://t.me/WD_Topic_Group"><img src="https://img.shields.io/badge/-Wᴅ Tᴏᴘɪᴄ Gʀᴏᴜᴘ%20%20-0077B5?style=flat&logo=Telegram&logoColor=white"/></a>
-<a href="https://t.me/WD_Request_Bot"><img src="https://img.shields.io/badge/-𝐖𝐎𝐎𝐃𝐜𝐫𝐚𝐟𝐭,𝐬 𝐁𝐨𝐭%20%20-0077B5?style=flat&logo=Telegram&logoColor=white"/></a>
- <br>
-<a href="https://t.me/Opleech"><img title="Telegram" src="https://img.shields.io/static/v1?label=WD.Zone&message=TG&color=blue-green"></a> 
- <br>
-<img src="https://media.giphy.com/media/jpVnC65DmYeyRL4LHS/giphy.gif" width="20%"> 
-</p>
- 
-
-Credits: [𝐖𝐎𝐎𝐃𝐜𝐫𝐚𝐟𝐭](https://t.me/Farooq_is_KING)
-
-- [![Contact Me On Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/Farooq_is_king)
-
-[Code Issues]:          https://img.shields.io/github/issues/SudoR2spr/TamilMV-Magnet-Bot-Deployment-Guide?label=Issues
-[License-Badge]:        https://img.shields.io/badge/License-MIT-blue.svg
-
-`Last Updated on: Sun,May,18,2025`
-
-
-# ⚠️ Disclaimer
-This project uses a public Docker image. Make sure you trust the image source before deploying.
+*   `main.py`: Starts the Controller Bot.
+*   `user_client.py`: Manages the background User Client process.
+*   `plugins/auth.py`: Handles the login flow (Phone -> OTP -> Session).
+*   `plugins/manager.py`: Bot commands for rules.
+*   `plugins/forwarder.py`: The logic attached to the User Client.
