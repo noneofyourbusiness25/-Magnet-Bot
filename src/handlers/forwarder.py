@@ -134,7 +134,10 @@ async def handle_channel_message(client: Client, message: Message):
     if not sudo_users_str:
         return
 
-    main_admin = int(sudo_users_str.split(',')[0].strip())
+    sudo_users = [int(x.strip()) for x in sudo_users_str.split(",") if x.strip()]
+    if not sudo_users:
+        return
+    main_admin = sudo_users[0]
     settings = await db.get_settings(main_admin)
 
     source_channel = settings.get("source_channel")
