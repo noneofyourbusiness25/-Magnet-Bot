@@ -1,5 +1,6 @@
 import asyncio
 import os
+import aiofiles.os
 import logging
 from pymediainfo import MediaInfo
 from src.utils.text_parser import TextSanitizer
@@ -186,10 +187,12 @@ async def _modify_mp4(file_path: str, user_settings: dict) -> str:
     stdout, stderr = await process.communicate()
 
     if process.returncode == 0:
-        os.replace(out_file, file_path)
+        await aiofiles.os.replace(out_file, file_path)
     else:
         logger.error(f"ffmpeg metadata edit failed: {stderr.decode()}")
-        if os.path.exists(out_file):
-            os.remove(out_file)
+        try:
+            await aiofiles.os.remove(out_file)
+        except Exception:
+            pass
 
     return file_path
