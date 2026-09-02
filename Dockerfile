@@ -1,8 +1,8 @@
 FROM python:3.11-slim
 
-# Install necessary packages including ffmpeg and mkvtoolnix
+# Install necessary packages including ffmpeg, mkvtoolnix, and mediainfo
 RUN apt-get update && \
-    apt-get install -y ffmpeg mkvtoolnix && \
+    apt-get install -y ffmpeg mkvtoolnix mediainfo && \
     rm -rf /var/lib/apt/lists/*
 
 # Set working directory

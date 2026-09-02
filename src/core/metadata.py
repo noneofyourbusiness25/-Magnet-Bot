@@ -106,6 +106,27 @@ async def _modify_mkv(file_path: str, user_settings: dict) -> str:
 
     return file_path
 
+async def extract_video_attributes(media_info) -> tuple:
+    """Extracts duration, width, height from pymediainfo object."""
+    duration = 0
+    width = 1280
+    height = 720
+
+    if not media_info:
+        return duration, width, height
+
+    for track in media_info.tracks:
+        if track.track_type == 'Video':
+            if track.duration:
+                duration = int(float(track.duration) / 1000)
+            if track.width:
+                width = int(track.width)
+            if track.height:
+                height = int(track.height)
+            break
+
+    return duration, width, height
+
 async def _modify_mp4(file_path: str, user_settings: dict) -> str:
     """
     Uses ffmpeg with stream copying to edit MP4 metadata quickly.
@@ -113,7 +134,9 @@ async def _modify_mp4(file_path: str, user_settings: dict) -> str:
     """
     out_file = f"{file_path}.temp.mp4"
 
-    cmd = ["ffmpeg", "-y", "-i", file_path, "-map", "0", "-c", "copy", "-map_metadata", "-1"]
+    # Removed -map_metadata -1 to preserve language tags and other metadata
+    # Added -movflags +faststart for instant streamability on Telegram
+    cmd = ["ffmpeg", "-y", "-i", file_path, "-map", "0", "-c", "copy", "-movflags", "+faststart"]
 
     media_info = await analyze_media(file_path)
     if not media_info:

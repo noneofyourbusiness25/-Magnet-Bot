@@ -88,6 +88,11 @@ async def settings_callback(client: Client, callback_query: CallbackQuery):
         msg = "Send a comma-separated list of words to blacklist.\nExample: `spam.com, @spamchannel`"
         await callback_query.message.reply(msg, reply_markup=ForceReply(selective=True))
 
+    elif data == "set_thumbnail":
+        user_states[user_id] = "awaiting_thumbnail"
+        msg = "Please send the new thumbnail image (as a Photo)."
+        await callback_query.message.reply(msg, reply_markup=ForceReply(selective=True))
+
 @Client.on_message(filters.private & filters.reply)
 async def state_machine_handler(client: Client, message: Message):
     user_id = message.from_user.id
@@ -124,9 +129,20 @@ async def state_machine_handler(client: Client, message: Message):
             await message.reply(f"❌ Invalid JSON format: {e}")
 
     elif state == "awaiting_blacklist":
-        words = [w.strip() for w in message.text.split(",") if w.strip()]
-        await db.update_setting(user_id, "blacklisted_words", words)
-        await message.reply("✅ Blacklist updated.")
+        if message.text:
+            words = [w.strip() for w in message.text.split(",") if w.strip()]
+            await db.update_setting(user_id, "blacklisted_words", words)
+            await message.reply("✅ Blacklist updated.")
+        else:
+            await message.reply("❌ Invalid text input.")
+
+    elif state == "awaiting_thumbnail":
+        if message.photo:
+            file_id = message.photo.file_id
+            await db.update_setting(user_id, "thumbnail", file_id)
+            await message.reply("✅ Thumbnail saved successfully.")
+        else:
+            await message.reply("❌ Please send an image/photo.")
 
     # Reset state
     user_states.pop(user_id, None)

@@ -47,6 +47,8 @@ if USER_SESSION:
         session_string=USER_SESSION
     )
 
+from src.handlers.forwarder import process_worker
+
 async def main():
     logger.info("Starting bot...")
     await bot.start()
@@ -55,12 +57,16 @@ async def main():
         logger.info("Starting user client...")
         await user_client.start()
 
+    logger.info("Starting background worker...")
+    worker_task = asyncio.create_task(process_worker())
+
     logger.info("Bot is running. Listening for events...")
 
     # Run forever
     await asyncio.Event().wait()
 
     logger.info("Stopping bot...")
+    worker_task.cancel()
     await bot.stop()
     if user_client:
         await user_client.stop()
