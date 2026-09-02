@@ -4,6 +4,7 @@ import math
 import random
 import logging
 import aiofiles
+import aiofiles.os
 from pyrogram import Client
 from typing import Callable, Coroutine
 from pyrogram.file_id import FileId
@@ -114,7 +115,7 @@ async def fast_upload(client: Client, chat_id: int, file_path: str, caption: str
     """
     Custom Parallel Chunked Uploader bypassing standard upload
     """
-    file_size = os.path.getsize(file_path)
+    file_size = (await aiofiles.os.stat(file_path)).st_size
     file_name = os.path.basename(file_path)
 
     # Dynamically scale chunk size to respect Telegram's 3999 part limit
