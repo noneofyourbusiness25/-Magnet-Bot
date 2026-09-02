@@ -11,7 +11,7 @@ def is_sudo(user_id: int) -> bool:
     sudo_users_str = os.environ.get("SUDO_USERS", "")
     if not sudo_users_str:
         return True # If no sudo users defined, allow anyone for now
-    sudo_users = [int(u.strip()) for u in sudo_users_str.split(',') if u.strip().isdigit()]
+    sudo_users = [int(x.strip()) for x in sudo_users_str.split(",") if x.strip()]
     return user_id in sudo_users
 
 @Client.on_message(filters.command("settings") & filters.private)
