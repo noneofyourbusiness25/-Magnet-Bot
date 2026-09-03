@@ -27,6 +27,7 @@ async def process_worker():
             logger.error(f"Error in process_worker: {e}")
         finally:
             task_queue.task_done()
+        await asyncio.sleep(0)
 
 async def process_file(task_data: dict):
     client = task_data['client']
@@ -54,7 +55,7 @@ async def process_file(task_data: dict):
         new_caption = TextSanitizer.apply_blacklists(original_caption, settings.get("blacklisted_words", []))
 
         download_path = os.path.join("downloads", new_filename)
-        os.makedirs("downloads", exist_ok=True)
+        await asyncio.to_thread(os.makedirs, "downloads", exist_ok=True)
 
         # Download
         download_tracker = ProgressTracker(status_msg, f"Downloading: {new_filename}")
@@ -106,19 +107,19 @@ async def process_file(task_data: dict):
             pass
     finally:
         # Strict Cleanup
-        if download_path and os.path.exists(download_path):
+        if download_path and await asyncio.to_thread(os.path.exists, download_path):
             try:
-                os.remove(download_path)
+                await asyncio.to_thread(os.remove, download_path)
             except Exception:
                 pass
-        if processed_path and processed_path != download_path and os.path.exists(processed_path):
+        if processed_path and processed_path != download_path and await asyncio.to_thread(os.path.exists, processed_path):
             try:
-                os.remove(processed_path)
+                await asyncio.to_thread(os.remove, processed_path)
             except Exception:
                 pass
-        if thumb_path and os.path.exists(thumb_path):
+        if thumb_path and await asyncio.to_thread(os.path.exists, thumb_path):
             try:
-                os.remove(thumb_path)
+                await asyncio.to_thread(os.remove, thumb_path)
             except Exception:
                 pass
 
