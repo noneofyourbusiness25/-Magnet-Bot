@@ -114,7 +114,7 @@ async def fast_upload(client: Client, chat_id: int, file_path: str, caption: str
     """
     Custom Parallel Chunked Uploader bypassing standard upload
     """
-    file_size = os.path.getsize(file_path)
+    file_size = await asyncio.to_thread(os.path.getsize, file_path)
     file_name = os.path.basename(file_path)
 
     # Dynamically scale chunk size to respect Telegram's 3999 part limit

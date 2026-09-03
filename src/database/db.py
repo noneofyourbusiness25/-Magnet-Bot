@@ -6,9 +6,27 @@ class Database:
     def __init__(self):
         self.uri = os.environ.get("MONGO_URI", "mongodb://localhost:27017")
         self.db_name = os.environ.get("MONGO_DB_NAME", "telegram_bot_db")
-        self.client = motor.motor_asyncio.AsyncIOMotorClient(self.uri)
-        self.db = self.client[self.db_name]
-        self.settings = self.db.settings
+        self._client = None
+        self._db = None
+        self._settings = None
+
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = motor.motor_asyncio.AsyncIOMotorClient(self.uri)
+        return self._client
+
+    @property
+    def db(self):
+        if self._db is None:
+            self._db = self.client[self.db_name]
+        return self._db
+
+    @property
+    def settings(self):
+        if self._settings is None:
+            self._settings = self.db.settings
+        return self._settings
 
     async def get_settings(self, user_id: int) -> dict:
         """Fetch user settings, or return default settings."""

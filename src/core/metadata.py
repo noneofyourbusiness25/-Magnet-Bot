@@ -186,10 +186,10 @@ async def _modify_mp4(file_path: str, user_settings: dict) -> str:
     stdout, stderr = await process.communicate()
 
     if process.returncode == 0:
-        os.replace(out_file, file_path)
+        await asyncio.to_thread(os.replace, out_file, file_path)
     else:
         logger.error(f"ffmpeg metadata edit failed: {stderr.decode()}")
-        if os.path.exists(out_file):
-            os.remove(out_file)
+        if await asyncio.to_thread(os.path.exists, out_file):
+            await asyncio.to_thread(os.remove, out_file)
 
     return file_path
