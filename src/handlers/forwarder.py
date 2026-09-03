@@ -12,21 +12,34 @@ from src.utils.progress import ProgressTracker
 logger = logging.getLogger(__name__)
 
 # Basic in-memory lock and queue
-processing_queue = set()
-task_queue = asyncio.Queue()
+_processing_queue = None
+_task_queue = None
+
+def get_processing_queue():
+    global _processing_queue
+    if _processing_queue is None:
+        _processing_queue = set()
+    return _processing_queue
+
+def get_task_queue():
+    global _task_queue
+    if _task_queue is None:
+        _task_queue = asyncio.Queue()
+    return _task_queue
 
 async def process_worker():
     """
     Background worker that processes files sequentially to protect disk and RAM.
     """
+    queue = get_task_queue()
     while True:
-        task_data = await task_queue.get()
+        task_data = await queue.get()
         try:
             await process_file(task_data)
         except Exception as e:
             logger.error(f"Error in process_worker: {e}")
         finally:
-            task_queue.task_done()
+            queue.task_done()
         await asyncio.sleep(0)
 
 async def process_file(task_data: dict):
@@ -123,7 +136,7 @@ async def process_file(task_data: dict):
             except Exception:
                 pass
 
-        processing_queue.discard(message.id)
+        get_processing_queue().discard(message.id)
 
 
 @Client.on_message(filters.channel & (filters.document | filters.video | filters.audio))
@@ -157,12 +170,13 @@ async def handle_channel_message(client: Client, message: Message):
         return
 
     # Check lock
-    if message.id in processing_queue:
+    p_queue = get_processing_queue()
+    if message.id in p_queue:
         return
-    processing_queue.add(message.id)
+    p_queue.add(message.id)
 
     # Push to queue
-    await task_queue.put({
+    await get_task_queue().put({
         'client': client,
         'message': message,
         'target_channel': target_channel,
