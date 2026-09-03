@@ -53,6 +53,11 @@ async def main():
     logger.info("Starting bot...")
     await bot.start()
 
+    # --- ADD THIS SANITY CHECK ---
+    me = await bot.get_me()
+    logger.info(f"SANITY CHECK: I am successfully logged in as @{me.username}")
+    # ------------------------
+
     if user_client:
         logger.info("Starting user client...")
         await user_client.start()
