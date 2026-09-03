@@ -14,6 +14,13 @@ def is_sudo(user_id: int) -> bool:
     sudo_users = [int(x.strip()) for x in sudo_users_str.split(",") if x.strip()]
     return user_id in sudo_users
 
+@Client.on_message(filters.command("start") & filters.private)
+async def start_command(client: Client, message: Message):
+    if not is_sudo(message.from_user.id):
+        return await message.reply("You are not authorized to use this bot.")
+    await message.reply("👋 Hello! I am your Telegram Forwarder Bot.\n\nUse /settings to configure me.")
+
+
 @Client.on_message(filters.command("settings") & filters.private)
 async def settings_command(client: Client, message: Message):
     if not is_sudo(message.from_user.id):

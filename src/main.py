@@ -34,6 +34,7 @@ bot = Client(
     api_id=int(API_ID),
     api_hash=API_HASH,
     bot_token=BOT_TOKEN,
+    in_memory=True,
     plugins=dict(root="src.handlers")
 )
 
@@ -44,6 +45,7 @@ if USER_SESSION:
         "telegram_user_client",
         api_id=int(API_ID),
         api_hash=API_HASH,
+        in_memory=True,
         session_string=USER_SESSION
     )
 
